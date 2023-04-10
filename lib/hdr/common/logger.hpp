@@ -32,22 +32,25 @@
 #define trace(str, ...) writeLog(__FUNCTION__, __LINE__, LOG_LEVEL_TRACE, str, __VA_ARGS__)
 
 using namespace std; 
+
 class Log {
 private:
     FILE *fp; 
     int logLevel; 
+    char* LOG_PATH;
     string getTimestamp();
-    
     int OpenLogFile();
+    void getLogLevelFromEnv();
 
 public:
-    Log();
-    Log(int level);
+    Log(const char* LOG_NAME);
+    Log(int level, const char* LOG_NAME);
     ~Log();
     void writeLog(const char *funcName, int line, int lv, const char *str, ...);
     void setLogLevel(int level);
     int getLogLevel();
 };
 
-static Log *log;
+extern Log *mlog;
+static char LOG_FILE[100];
 #endif /* _YJ_LOG_H_*/

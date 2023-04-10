@@ -1,28 +1,32 @@
 
 #include "logger.hpp"
 
-
 #include <stdlib.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <errno.h>
 
-Log::Log(){
+Log::Log(const char* LOG_NAME){
     int ret = YJ_SUCCESS;
 
-    this->logLevel = LOG_LEVEL_ERROR;
-
+    logLevel = LOG_LEVEL_ERROR;
+    LOG_PATH = getenv("MYAPP_LOG");
+    sprintf(LOG_FILE, "%s/%s.log", LOG_PATH, LOG_NAME);
+    getLogLevelFromEnv();
+    
+    printf("Log level is set to \"%s\"\n", getenv("LOG_LEVEL"));
     if ((ret |= OpenLogFile()) == YJ_FAILED){
         perror("Failed to create log file");
         exit(1);
     }
+    info("Initialized Log file -> %s", LOG_NAME, 0);
 }
 
-Log::Log(int level){
+Log::Log(int level, const char* LOG_NAME){
     int ret = YJ_SUCCESS;
-
-    this->logLevel = level;
+    logLevel = level;
+    sprintf(LOG_FILE, "%s/%s.log", LOG_PATH, LOG_NAME);
 
     if ((ret |= OpenLogFile()) == YJ_FAILED){
         perror("Failed to create log file");
@@ -34,17 +38,40 @@ Log::~Log(){
 
 }
 
+void Log::getLogLevelFromEnv(){
+    char *log_level_in_env = getenv("LOG_LEVEL");
+    if(strcmp(log_level_in_env,"LOG_LEVEL_OFF") == 0)
+        setLogLevel(LOG_LEVEL_OFF);
+    else if (strcmp(log_level_in_env, "LOG_LEVEL_FATAL") == 0)
+        setLogLevel(LOG_LEVEL_FATAL);
+    else if (strcmp(log_level_in_env, "LOG_LEVEL_ERROR") == 0)
+        setLogLevel(LOG_LEVEL_ERROR);
+    else if (strcmp(log_level_in_env, "LOG_LEVEL_WARN") == 0)
+        setLogLevel(LOG_LEVEL_WARN);
+    else if (strcmp(log_level_in_env, "LOG_LEVEL_INFO") == 0)
+        setLogLevel(LOG_LEVEL_INFO);
+    else if (strcmp(log_level_in_env, "LOG_LEVEL_DEBUG") == 0)
+        setLogLevel(LOG_LEVEL_DEBUG);
+    else if (strcmp(log_level_in_env, "LOG_LEVEL_TRACE") == 0)
+        setLogLevel(LOG_LEVEL_TRACE);
+    else if (strcmp(log_level_in_env, "LOG_LEVEL_ALL") == 0)
+        setLogLevel(LOG_LEVEL_ALL);
+    else{
+        printf("Failed to set log level from environments");
+        printf("Log level is automatically set to \"LOG_LEVEL_ERROR\"");
+        setLogLevel(LOG_LEVEL_ERROR);
+    }
+}
+
 int Log::OpenLogFile(){
     int success = YJ_SUCCESS; 
     int fd; 
-    
-    if(mkdir(LOG_PATH, 0666) && errno != EEXIST)
+    if(mkdir(LOG_PATH, 0777) && errno != EEXIST)
         success = YJ_FAILED;
-    if ((fd = open(LOG_FILE, O_CREAT | O_WRONLY, 0666)) < 0)
+    if ((fd = open(LOG_FILE, O_CREAT | O_WRONLY | O_RDONLY, 0666)) < 0)
         success = YJ_FAILED;
 
     close(fd);
-    
     return success;
 }
 

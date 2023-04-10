@@ -11,4 +11,5 @@ set(HEADER_DIR
 
 
 add_library(${TARGET} ${SOURCES})
+target_link_libraries(${TARGET} PRIVATE common)
 target_include_directories(${TARGET} PRIVATE ${HEADER_DIR})
