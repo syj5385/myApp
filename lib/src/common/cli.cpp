@@ -1,25 +1,6 @@
 #include "cli.hpp"
 #include "logger.hpp"
 
-char * strip(char *str)
-{
-  // change BUF_SIZE depending on the length of your string
-	char buf[BUFSIZ]={0,};
-	char *p;
-	p = strtok(str, "\r\n\t ");
-	strcat(buf, p);
-	while(p!=NULL){
-		p = strtok(NULL, "\r\n\t ");
-		if(p!=NULL) {
-			strcat(buf, " ");
-			strcat(buf, p);
-		}
-	}
-	memset(str, '\0', BUFSIZ);
-	strcpy(str, buf);
-	return str;
-}
-
 void *process_thread(void *args){
     void** arg = (void**)args; 
     bool running = *(bool*)args;
