@@ -64,7 +64,9 @@ CLI::CLI(){
     run_cli();
 }
 
-CLI::~CLI(){}
+CLI::~CLI(){
+    running = false;
+}
 
 void CLI::run_cli(){
     void* arg[2];
