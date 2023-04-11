@@ -2,8 +2,6 @@
 #include "logger.hpp"
 #include "common.h"
 
-// Log *mlog; 
-
 Network::Network (int protocol){
     if (protocol >= PROTOCOL_END){
         mlog->error("Invalid protocol range",0);
