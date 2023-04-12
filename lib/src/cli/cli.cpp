@@ -7,16 +7,53 @@
 
 using namespace std; 
 CLI *mcli;
+unordered_map<int, Network*> server_list;
+
 int execute_exit(int argc, char **argv){
     printf("Exiting the process. Bye~\n");
     mcli->setRunning(false);
 
     while(his_list.size() != 0)
         his_list.pop_front();
+        
 
     exit(0);    
     /* Stop all of server */
 
+    return YJ_SUCCESS;
+}
+
+int execute_tcpserver(int argc, char **argv){    
+    int i=0; 
+    
+    if (argc == 3){
+        int port = atoi(argv[2]);
+        if (strcmp(argv[1], "open") == 0){
+            Network *n = new Network(TCP);
+            if (server_list.find(port) == server_list.end()){
+                server_list.insert({port, n});
+                if (n->Bind(port) == YJ_FAILED){
+                    mlog->error("Failed to open tcpserver on %d port\n", port);
+                    return YJ_FAILED;
+                }
+            }
+            else{
+                mlog->error("Port %d is already binded\n", port);
+                return YJ_FAILED;
+            }
+        }
+        else if (strcmp(argv[1], "close") == 0){
+            server_list[port]->setRunning(false);
+            server_list[port]->Close();
+            free(server_list[port]);
+            server_list.erase(port);
+            return YJ_SUCCESS;
+        }
+    }
+    else{
+        printf("Invalid command tcp server\n");
+    }
+    
     return YJ_SUCCESS;
 }
 
@@ -141,6 +178,9 @@ int process_command(char* cmd){
 
     if (strcmp(argv[0], "log") == 0)
             return execute_log(argc, argv);
+
+    if (strcmp(argv[0], "tcpserver") == 0)
+        return execute_tcpserver(argc, argv);
 
 
     return ret; 

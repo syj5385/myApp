@@ -66,6 +66,6 @@ public:
     }
 };
 
-extern unordered_map<int, Network> server_list;
+extern unordered_map<int, Network*> server_list;
 
 #endif /* _NETWORK_H_ */
