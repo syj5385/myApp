@@ -11,6 +11,7 @@
 #include <queue>
 #include <unistd.h>
 #include <fcntl.h>
+#include <unordered_map>
 
 #include "logger.hpp"
 
@@ -64,5 +65,7 @@ public:
         return protocol == TCP ? "TCP" : "UDP";
     }
 };
+
+extern unordered_map<int, Network> server_list;
 
 #endif /* _NETWORK_H_ */

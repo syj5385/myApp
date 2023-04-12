@@ -2,10 +2,10 @@
 
 #include "logger.hpp"
 #include "network.hpp"
+#include "common.h"
 
-Log *mlog; 
 Network *u_server_net, *u_client_net, *t_server_net, *t_client_net; 
-
+Log *mlog; 
 void *udp_server(void *args){
     u_server_net = new Network(UDP);
     u_server_net->Bind(atoi(getenv("UDP_PORT")));

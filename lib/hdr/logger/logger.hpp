@@ -12,8 +12,7 @@
 #include <iomanip>
 #include <unistd.h>
 
-/* User header */
-#include "common.h"
+
 
 #define LOG_LEVEL_OFF       0
 #define LOG_LEVEL_FATAL     10
@@ -40,7 +39,7 @@ private:
     char* LOG_PATH;
     string getTimestamp();
     int OpenLogFile();
-    void getLogLevelFromEnv();
+    void setLogLevelFromEnv();
 
 public:
     Log(const char* LOG_NAME);

@@ -1,5 +1,7 @@
 
+/* User header */
 #include "logger.hpp"
+#include "common.h"
 
 #include <stdlib.h>
 #include <fcntl.h>
@@ -10,12 +12,10 @@
 Log::Log(const char* LOG_NAME){
     int ret = YJ_SUCCESS;
 
-    logLevel = LOG_LEVEL_ERROR;
     LOG_PATH = getenv("MYAPP_LOG");
     sprintf(LOG_FILE, "%s/%s.log", LOG_PATH, LOG_NAME);
-    getLogLevelFromEnv();
+    setLogLevelFromEnv();
     
-    printf("Log level is set to \"%s\"\n", getenv("LOG_LEVEL"));
     if ((ret |= OpenLogFile()) == YJ_FAILED){
         perror("Failed to create log file");
         exit(1);
@@ -25,7 +25,8 @@ Log::Log(const char* LOG_NAME){
 
 Log::Log(int level, const char* LOG_NAME){
     int ret = YJ_SUCCESS;
-    logLevel = level;
+    setLogLevel(level);
+    LOG_PATH = getenv("MYAPP_LOG");
     sprintf(LOG_FILE, "%s/%s.log", LOG_PATH, LOG_NAME);
 
     if ((ret |= OpenLogFile()) == YJ_FAILED){
@@ -38,7 +39,7 @@ Log::~Log(){
 
 }
 
-void Log::getLogLevelFromEnv(){
+void Log::setLogLevelFromEnv(){
     char *log_level_in_env = getenv("LOG_LEVEL");
     if(strcmp(log_level_in_env,"LOG_LEVEL_OFF") == 0)
         setLogLevel(LOG_LEVEL_OFF);
@@ -149,6 +150,35 @@ void Log::writeLog(const char *funcName, int line, int lv, const char *str, ...)
 
 void Log::setLogLevel(int level){
     this->logLevel = level; 
+    printf("Log level is set to ");
+    switch(level){
+        case 0:
+            printf("LOG_LEVEL_OFF\n\n");
+            break;
+        case 10:
+            printf("LOG_LEVEL_FATAL\n\n");
+            break;
+        case 20:
+            printf("LOG_LEVEL_ERROR\n\n");
+            break; 
+        case 30:
+            printf("LOG_LEVEL_WARN\n\n");
+            break;
+        case 40:
+            printf("LOG_LEVEL_INFO\n\n");
+            break; 
+        case 50:
+            printf("LOG_LEVEL_DEBUG\n\n");
+            break;
+        case 60:
+            printf("LOG_LEVEL_TRACE\n\n");
+            break;
+        case 100:
+            printf("LOG_LEVEL_ALL\n\n");
+            break;
+    }
+
+    
 }
 int Log::getLogLevel(){
     return this->logLevel;

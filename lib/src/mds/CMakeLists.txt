@@ -9,7 +9,7 @@ include_directories(include
     ${CMAKE_SOURCE_DIR}/lib/hdr/common
     ${CMAKE_SOURCE_DIR}/lib/hdr/logger
 )
-link_libraries(common logger)
+link_libraries(logger)
 
 set(HEADER_DIR 
     ${CMAKE_SOURCE_DIR}/lib/hdr/mds
